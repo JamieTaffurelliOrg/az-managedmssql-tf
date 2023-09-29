@@ -17,7 +17,6 @@ resource "azurerm_mssql_managed_instance" "sql_server" {
   storage_account_type           = var.storage_account_type
   timezone_id                    = var.timezone_id
   minimum_tls_version            = "1.2"
-  zone_redundant                      = var.zone_redundant
 
   identity {
     type = "SystemAssigned"
@@ -28,7 +27,7 @@ resource "azurerm_mssql_managed_instance" "sql_server" {
 
 resource "azurerm_monitor_diagnostic_setting" "sql_server_diagnostics" {
   name                       = "${var.log_analytics_workspace_name}-security-logging"
-  target_resource_id         = azurerm_mssql_server.sql_server.id
+  target_resource_id         = azurerm_mssql_managed_instance.sql_server.id
   log_analytics_workspace_id = data.azurerm_log_analytics_workspace.logs.id
 
   log {
@@ -132,7 +131,7 @@ resource "azurerm_mssql_managed_instance_security_alert_policy" "alert_policy" {
   email_addresses              = var.email_addresses
 }
 
-resource "azurerm_mssql_server_vulnerability_assessment" "vuln_assess" {
+resource "azurerm_mssql_managed_instance_vulnerability_assessment" "vuln_assess" {
   managed_instance_id        = azurerm_mssql_managed_instance.sql_server.id
   storage_container_path     = "${data.azurerm_storage_account.monitor_storage_account.primary_blob_endpoint}${var.monitor_storage_account.container_name}/"
   storage_account_access_key = data.azurerm_storage_account.monitor_storage_account.primary_access_key
@@ -144,10 +143,10 @@ resource "azurerm_mssql_server_vulnerability_assessment" "vuln_assess" {
   }
 }
 
-resource "azurerm_mssql_database" "sql_db" {
-  for_each                            = { for k in var.databases : k.name => k if k != null }
-  name                                = each.key
-  managed_instance_id                           = azurerm_mssql_managed_instance.sql_server.id
+resource "azurerm_mssql_managed_database" "sql_db" {
+  for_each            = { for k in var.databases : k.name => k if k != null }
+  name                = each.key
+  managed_instance_id = azurerm_mssql_managed_instance.sql_server.id
 
   long_term_retention_policy {
     weekly_retention  = each.value["long_term_retention_policy"].weekly_retention
@@ -156,10 +155,5 @@ resource "azurerm_mssql_database" "sql_db" {
     week_of_year      = each.value["long_term_retention_policy"].week_of_year
   }
 
-  short_term_retention_policy {
-    retention_days           = each.value["short_term_retention_policy"].retention_days
-    backup_interval_in_hours = each.value["short_term_retention_policy"].backup_interval_in_hours
-  }
-
-  tags = var.tags
+  short_term_retention_days = each.value["short_term_retention_policy"].retention_days
 }

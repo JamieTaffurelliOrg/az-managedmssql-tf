@@ -97,68 +97,12 @@ variable "azuread_authentication_only" {
   description = "Only allow logins via Azure AD"
 }
 
-variable "zone_redundant" {
-  type        = bool
-  description = "Is the managed instance zone redundant"
-}
-
 variable "sql_admin" {
-  type        = object({
-    username = string
+  type = object({
+    username  = string
     object_id = string
   })
   description = "Azure AD SQL admin"
-}
-
-variable "extended_audit_policy" {
-  type = object({
-    storage_audit_enabled                   = optional(bool, false)
-    storage_account_access_key_is_secondary = optional(bool, false)
-    retention_in_days                       = optional(number, 0)
-    storage_account_subscription_id         = optional(string)
-  })
-  default     = null
-  description = "SQL server extended audit policy"
-}
-
-variable "ms_support_audit_policy" {
-  type = object({
-    storage_audit_enabled           = optional(bool, false)
-    storage_account_subscription_id = optional(string)
-  })
-  default     = null
-  description = "SQL server Microsoft support audit policy"
-}
-
-variable "dns_aliases" {
-  type        = list(string)
-  default     = []
-  description = "DNS aliases of the SQL server"
-}
-
-variable "outbound_rules" {
-  type        = list(string)
-  default     = []
-  description = "Outbound firewall rules for the SQL server"
-}
-
-variable "firewall_rules" {
-  type = list(object({
-    name             = string
-    start_ip_address = string
-    end_ip_address   = string
-  }))
-  default     = []
-  description = "Inbound firewall rules for the SQL server"
-}
-
-variable "network_rules" {
-  type = list(object({
-    name      = string
-    subnet_id = string
-  }))
-  default     = []
-  description = "Subnet rules for the sql server"
 }
 
 variable "alert_policy" {
@@ -167,36 +111,6 @@ variable "alert_policy" {
   })
   default     = null
   description = "SQL server extended audit policy"
-}
-
-variable "elastic_pools" {
-  type = list(object({
-    name                           = string
-    license_type                   = optional(string, "LicenseIncluded")
-    max_size_gb                    = number
-    maintenance_configuration_name = optional(string, "SQL_Default")
-    zone_redundant                 = bool
-    sku_name                       = string
-    sku_tier                       = string
-    sku_family                     = string
-    capacity                       = string
-    min_capacity                   = number
-    max_capacity                   = number
-  }))
-  default     = []
-  description = "Elastic pools for the sql server"
-}
-
-variable "private_endpoint" {
-  type = object({
-    subnet_name                          = string
-    virtual_network_name                 = string
-    subnet_resource_group_name           = string
-    private_dns_zone_name                = string
-    private_dns_zone_resource_group_name = string
-  })
-  default     = null
-  description = "Private endpoint for the sql server"
 }
 
 variable "databases" {
@@ -243,27 +157,6 @@ variable "databases" {
   description = "Databases for the sql server"
 }
 
-variable "job_agents" {
-  type = list(object({
-    name               = string
-    database_reference = string
-  }))
-  default     = []
-  description = "Job agents for the sql server"
-}
-
-variable "failover_groups" {
-  type = list(object({
-    name                                              = string
-    databases                                         = list(string)
-    readonly_endpoint_failover_policy_enabled         = optional(bool, false)
-    read_write_endpoint_failover_policy_mode          = string
-    read_write_endpoint_failover_policy_grace_minutes = optional(number)
-  }))
-  default     = []
-  description = "Failover groups for the SQL server"
-}
-
 variable "email_addresses" {
   type        = list(string)
   description = "Additional email addresses for alerts"
@@ -276,15 +169,6 @@ variable "monitor_storage_account" {
     container_name      = string
   })
   default     = null
-  description = "SQL server extended audit policy"
-}
-
-variable "logins" {
-  type = map(object({
-    password = string
-  }))
-  default     = null
-  sensitive   = true
   description = "SQL server extended audit policy"
 }
 
