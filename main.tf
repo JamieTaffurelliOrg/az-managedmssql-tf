@@ -30,84 +30,37 @@ resource "azurerm_monitor_diagnostic_setting" "sql_server_diagnostics" {
   target_resource_id         = azurerm_mssql_managed_instance.sql_server.id
   log_analytics_workspace_id = data.azurerm_log_analytics_workspace.logs.id
 
-  log {
+  enabled_log {
     category = "SQLInsights"
-    enabled  = true
-
-    retention_policy {
-      enabled = true
-      days    = 365
-    }
   }
 
-  log {
+  enabled_log {
     category = "QueryStoreRuntimeStatistics"
-    enabled  = true
-
-    retention_policy {
-      enabled = true
-      days    = 365
-    }
   }
 
-  log {
+  enabled_log {
     category = "QueryStoreWaitStatistics"
-    enabled  = true
-
-    retention_policy {
-      enabled = true
-      days    = 365
-    }
   }
 
-  log {
+  enabled_log {
     category = "Errors"
-    enabled  = true
-
-    retention_policy {
-      enabled = true
-      days    = 365
-    }
   }
 
-  log {
+  enabled_log {
     category = "ResourceUsageStatistics"
-    enabled  = true
-
-    retention_policy {
-      enabled = true
-      days    = 365
-    }
   }
 
-  log {
+  enabled_log {
     category = "DevopsOperationsAuditLogs"
-    enabled  = true
-
-    retention_policy {
-      enabled = true
-      days    = 365
-    }
   }
 
-  log {
+  enabled_log {
     category = "SQLSecurityAuditEvent"
-    enabled  = true
-
-    retention_policy {
-      enabled = true
-      days    = 365
-    }
   }
 
   metric {
     category = "AllMetrics"
     enabled  = true
-
-    retention_policy {
-      enabled = true
-      days    = 365
-    }
   }
 }
 
